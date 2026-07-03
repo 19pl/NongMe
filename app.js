@@ -10,6 +10,9 @@
   ของวันถัดไปเท่านั้น ต่อให้ตอบถูกตอนไหนของวันก็ตาม
 */
 
+// ตั้งค่าโหมดทดสอบ (true = ปิดระบบคูลดาวน์สำหรับทดสอบ, false = เปิดคูลดาวน์วันละข้อปกติเมื่อใช้งานจริง)
+const IS_TEST_MODE = true;
+
 // รายการคำถามทั้งหมด
 const QUESTIONS = [
   {
@@ -82,6 +85,7 @@ function hhNormalize(s){
 // index คือเลขข้อแบบ 1..5
 // ตรวจสอบว่าข้อถัดไปถูกปลดล็อกแล้วหรือยัง
 function hhIsUnlocked(index, state){
+  if (IS_TEST_MODE) return true; // ถ้าอยู่ในโหมดทดสอบ จะไม่มีการจำกัดคูลดาวน์ (เล่นได้ต่อเนื่องเลย)
   if(index === 1) return true;
   const prevDate = state.answeredDates[index - 2]; // วันที่ตอบถูกข้อก่อนหน้า
   if(!prevDate) return false;
