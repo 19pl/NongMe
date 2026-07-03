@@ -18,6 +18,19 @@
   </div>
  
   <script src="app.js"></script>
+  <script>
+    // ส่งผู้เล่นไปยังคำถามล่าสุดที่กำลังเล่นค้างอยู่โดยอัตโนมัติ
+    (function autoRedirect() {
+      const state = hhLoadState();
+      if (state && state.correctCount > 0) {
+        if (state.correctCount >= QUESTIONS.length) {
+          window.location.replace('hints.html');
+        } else {
+          window.location.replace(`q${state.correctCount + 1}.html`);
+        }
+      }
+    })();
+  </script>
 </body>
 </html>
  
