@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตามล่าใบ้พี่รหัส — คำถามที่ 5</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="hh-root">
+  <h1 class="hh-title">ตามล่าใบ้พี่รหัส</h1>
+  <p class="hh-sub">ตอบให้ถูก ปลดคำใบ้ทีละชิ้น — ได้วันละ 1 ข้อเท่านั้น</p>
+
+  <div class="hh-track" id="hhTrack"></div>
+  <div id="hhCardWrap"></div>
+
+  <div class="hh-toolbar">
+    <a class="hh-link-btn" href="hints.html">📜 คลังคำใบ้ที่สะสมได้</a>
+    <button class="hh-link-btn" id="hhResetBtn">รีเซ็ต (ทดสอบ)</button>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    hhInitQuestionPage(5);
+    hhWireResetButton(document.getElementById('hhResetBtn'));
+  </script>
+</body>
+</html>

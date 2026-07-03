@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>คลังคำใบ้ — ตามล่าใบ้พี่รหัส</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="hh-root">
+  <h1 class="hh-title">📜 คลังคำใบ้</h1>
+  <p class="hh-sub" id="hhCountText"></p>
+
+  <div class="hh-track" id="hhTrack"></div>
+  <div id="hhList"></div>
+
+  <div class="hh-toolbar">
+    <a class="hh-link-btn" href="index.html">🏠 กลับหน้าแรก</a>
+    <button class="hh-link-btn" id="hhResetBtn">รีเซ็ต (ทดสอบ)</button>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const state = hhLoadState();
+    hhRenderTrack(document.getElementById('hhTrack'), 0, state);
+    document.getElementById('hhCountText').textContent =
+      `เก็บได้แล้ว ${state.correctCount}/${QUESTIONS.length} ชิ้น`;
+
+    const listEl = document.getElementById('hhList');
+    const collected = QUESTIONS.slice(0, state.correctCount);
+    if(collected.length === 0){
+      listEl.innerHTML = '<p class="hh-modal-empty">ยังไม่มีคำใบ้ที่สะสมได้ ไปตอบคำถามข้อแรกกันก่อนนะ</p>';
+    } else {
+      listEl.innerHTML = collected.map((q, i) =>
+        `<div class="hh-modal-item"><b>ใบ้ที่ ${i + 1}</b>${q.hint}</div>`
+      ).join('');
+    }
+
+    hhWireResetButton(document.getElementById('hhResetBtn'));
+  </script>
+</body>
+</html>
