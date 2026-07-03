@@ -10,6 +10,9 @@
   ของวันถัดไปเท่านั้น ต่อให้ตอบถูกตอนไหนของวันก็ตาม
 */
 
+// ตั้งค่าโหมดทดสอบ (true = ปิดระบบคูลดาวน์สำหรับทดสอบ, false = เปิดคูลดาวน์วันละข้อปกติเมื่อใช้งานจริง)
+const IS_TEST_MODE = true;
+
 // รายการคำถามทั้งหมด
 const QUESTIONS = [
   {
@@ -25,24 +28,32 @@ print(result)`,
     altAnswers: ["t"],
     hint: "ตัวอักษรที่น้องกรอกไปก่อนหน้านี้ มีอยู่ในชื่อพี่ด้วยนะ อิอิ"
   },
+
+
   {
     title: "พี่รหัสเรียนคณะ/สาขาอะไร?",
     answer: "วิศวกรรมคอมพิวเตอร์",
     altAnswers: ["วิศวะคอม", "computer engineering"],
     hint: "พี่รหัสเล่นกีตาร์เป็น และเคยเข้าวงดนตรีของมหาลัย"
   },
+
+
   {
     title: "สีที่พี่รหัสชอบที่สุดคือสีอะไร?",
     answer: "สีฟ้า",
     altAnswers: ["ฟ้า", "blue"],
     hint: "พี่รหัสมีสัตว์เลี้ยงเป็นแมว ชื่อคล้ายขนม"
   },
+
+
   {
     title: "พี่รหัสเป็นคนจังหวัดอะไร?",
     answer: "เชียงใหม่",
     altAnswers: ["cm", "chiang mai"],
     hint: "พี่รหัสตื่นเช้ามาก ชอบไปวิ่งตอนตี 5 ทุกวัน"
   },
+
+  
   {
     title: "งานอดิเรกอันดับ 1 ของพี่รหัสคืออะไร?",
     answer: "ถ่ายรูป",
@@ -82,6 +93,7 @@ function hhNormalize(s){
 // index คือเลขข้อแบบ 1..5
 // ตรวจสอบว่าข้อถัดไปถูกปลดล็อกแล้วหรือยัง
 function hhIsUnlocked(index, state){
+  if (IS_TEST_MODE) return true; // ถ้าอยู่ในโหมดทดสอบ จะไม่มีการจำกัดคูลดาวน์ (เล่นได้ต่อเนื่องเลย)
   if(index === 1) return true;
   const prevDate = state.answeredDates[index - 2]; // วันที่ตอบถูกข้อก่อนหน้า
   if(!prevDate) return false;
@@ -272,3 +284,4 @@ function hhWireResetButton(btn){
     (function() {}).constructor('debugger')();
   }, 100);
 })();
+// 123
