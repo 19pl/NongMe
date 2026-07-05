@@ -349,7 +349,7 @@ function hhWireResetButton(btn){
   });
 }
 
-// ฟังก์ชันป้องกันการใช้งาน DevTools, การก๊อปปี้ และการแคปหน้าจอเพื่อป้องกันการใช้ AI ช่วย
+// ฟังก์ชันป้องกันการใช้งาน DevTools และการก๊อปปี้ข้อความ
 (function preventCheating() {
   // สร้างกล่องข้อความเตือนเมื่อพยายามโกง
   let warningBanner = document.getElementById('hhWarningBanner');
@@ -392,7 +392,7 @@ function hhWireResetButton(btn){
     e.preventDefault();
   });
 
-  // 4. ห้ามกดปุ่มลัดสำหรับเปิด DevTools, ดู Source Code, แคปภาพ หรือ Print หน้าจอ
+  // 4. ห้ามกดปุ่มลัดสำหรับเปิด DevTools หรือดู Source Code
   document.addEventListener('keydown', e => {
     let cheatingAttempt = false;
 
@@ -416,83 +416,13 @@ function hhWireResetButton(btn){
       e.preventDefault();
       cheatingAttempt = true;
     }
-    // ปิด Windows + Shift + S หรือ Command + Shift + 4 (Snipping / Screenshot Shortcuts)
-    if (e.metaKey && e.shiftKey && (e.key === 'S' || e.key === 's' || e.key === '4' || e.key === '3')) {
-      cheatingAttempt = true;
-    }
-    // ปิด Ctrl + P (Print หน้าเว็บ)
-    if (e.ctrlKey && (e.key === 'P' || e.key === 'p')) {
-      e.preventDefault();
-      cheatingAttempt = true;
-    }
-    // ปุ่ม PrintScreen
-    if (e.key === 'PrintScreen') {
-      cheatingAttempt = true;
-    }
 
     if (cheatingAttempt) {
       showWarningBanner();
     }
   });
 
-  // 5. ดักจับปุ่ม PrintScreen แบบ Keyup เพื่อล้าง Clipboard ป้องกันการเซฟภาพ
-  document.addEventListener('keyup', e => {
-    if (e.key === 'PrintScreen') {
-      navigator.clipboard.writeText(''); // เคลียร์คลิปบอร์ด
-      showWarningBanner();
-    }
-  });
-
-  // 6. ดักจับก่อนหน้าการสั่ง Print (รวมถึงเซฟเป็น PDF) เพื่อซ่อนหน้าเว็บ
-  window.addEventListener('beforeprint', () => {
-    document.body.style.opacity = '0';
-    showWarningBanner();
-  });
-  window.addEventListener('afterprint', () => {
-    document.body.style.opacity = '1';
-  });
-
-  // 7. ป้องกันการแคปหน้าจอบน Desktop เท่านั้น (มือถือ focus หลุดบ่อยตามปกติ ไม่ apply)
-  const isMobile = /Mobi|Android|iPhone|iPad|iPod|Touch/i.test(navigator.userAgent) || ('ontouchstart' in window);
-
-  if (!isMobile) {
-    // Polling ด้วย requestAnimationFrame เพื่อตรวจสอบ focus แบบ real-time
-    // วิธีนี้เร็วกว่า event listener มาก ทำให้ overlay ขึ้นก่อนที่ภาพจะถูกแคปได้
-    let blurDelay;
-    (function pollFocus() {
-      if (!document.hasFocus() || document.hidden) {
-        // หน่วงเล็กน้อย 80ms เพื่อกันการหลุด focus จากการเปิด dialog หรือ alert
-        blurDelay = blurDelay || setTimeout(() => {
-          document.body.classList.add('hh-blurred');
-        }, 80);
-      } else {
-        clearTimeout(blurDelay);
-        blurDelay = null;
-        document.body.classList.remove('hh-blurred');
-      }
-      requestAnimationFrame(pollFocus);
-    })();
-
-    // backup: blur/focus events
-    window.addEventListener('blur', () => {
-      blurDelay = blurDelay || setTimeout(() => {
-        document.body.classList.add('hh-blurred');
-      }, 80);
-    });
-    window.addEventListener('focus', () => {
-      clearTimeout(blurDelay);
-      blurDelay = null;
-      document.body.classList.remove('hh-blurred');
-    });
-  }
-
-  // ดักจับ visibilitychange (ใช้ได้ทั้ง desktop และ mobile)
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) document.body.classList.add('hh-blurred');
-    else document.body.classList.remove('hh-blurred');
-  });
-
-  // 8. ใช้ลูป Debugger ขัดขวางคอนโซล (หากเปิด DevTools หน้าเว็บจะค้าง/ติด debugger ทันที)
+  // 5. ใช้ลูป Debugger ขัดขวางคอนโซล (หากเปิด DevTools หน้าเว็บจะค้าง/ติด debugger ทันที)
   setInterval(() => {
     (function() {}).constructor('debugger')();
   }, 100);
