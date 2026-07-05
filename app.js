@@ -1,5 +1,4 @@
 
-
 // ตั้งค่าโหมดทดสอบ (true = ปิดระบบคูลดาวน์สำหรับทดสอบ, false = เปิดคูลดาวน์วันละข้อปกติเมื่อใช้งานจริง)
 const IS_TEST_MODE = false;
 
@@ -440,3 +439,4 @@ function hhWireResetButton(btn){
     (function() {}).constructor('debugger')();
   }, 100);
 })();
+// 123
