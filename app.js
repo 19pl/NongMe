@@ -421,7 +421,7 @@ function hhWireResetButton(btn){
       e.preventDefault();
       cheatingAttempt = true;
     }
-    if (e.ctrlKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+    if (e.shiftKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
       e.preventDefault();
       cheatingAttempt = true;
     }
