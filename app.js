@@ -11,7 +11,7 @@
 */
 
 // ตั้งค่าโหมดทดสอบ (true = ปิดระบบคูลดาวน์สำหรับทดสอบ, false = เปิดคูลดาวน์วันละข้อปกติเมื่อใช้งานจริง)
-const IS_TEST_MODE = true;
+const IS_TEST_MODE = false;
 
 // รายการคำถามทั้งหมด
 const QUESTIONS = [
