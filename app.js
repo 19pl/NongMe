@@ -452,19 +452,23 @@ function hhWireResetButton(btn){
     document.body.style.opacity = '1';
   });
 
-  // 7. ดักจับเมื่อหลุดโฟกัสหรือสลับแท็บ (เพื่อป้องกันการแคปหน้าจอด้วย Snipping Tool หรือโปรแกรมภายนอก)
-  window.addEventListener('blur', () => {
-    document.body.classList.add('hh-blurred');
-  });
-  window.addEventListener('focus', () => {
-    document.body.classList.remove('hh-blurred');
-  });
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
+  // 7. Polling ด้วย requestAnimationFrame เพื่อตรวจสอบ focus แบบ real-time
+  // วิธีนี้เร็วกว่า event listener มาก ทำให้ overlay ขึ้นก่อนที่ภาพจะถูกแคปได้
+  (function pollFocus() {
+    if (!document.hasFocus() || document.hidden) {
       document.body.classList.add('hh-blurred');
     } else {
       document.body.classList.remove('hh-blurred');
     }
+    requestAnimationFrame(pollFocus);
+  })();
+
+  // ดักจับ blur/focus และ visibilitychange เป็น backup เพิ่มเติม
+  window.addEventListener('blur', () => document.body.classList.add('hh-blurred'));
+  window.addEventListener('focus', () => document.body.classList.remove('hh-blurred'));
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) document.body.classList.add('hh-blurred');
+    else document.body.classList.remove('hh-blurred');
   });
 
   // 8. ใช้ลูป Debugger ขัดขวางคอนโซล (หากเปิด DevTools หน้าเว็บจะค้าง/ติด debugger ทันที)

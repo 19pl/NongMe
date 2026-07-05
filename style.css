@@ -265,26 +265,38 @@ body.hh-root{
   top: 24px;
 }
 
-/* บล็อกหน้าจอเมื่อเปิดแคปเจอร์/สลับหน้าต่าง */
+/* บล็อกหน้าจอทันทีเมื่อสูญเสียโฟกัส - ไม่มี transition เพื่อให้เร็วที่สุด */
 body.hh-root.hh-blurred {
-  filter: blur(40px);
+  filter: blur(60px) brightness(0.1);
   overflow: hidden;
+  transition: none !important;
+  pointer-events: none;
 }
-body.hh-root.hh-blurred::after {
-  content: 'ฮันแน่!!! ลองคิดเองก่อนน้าา';
+body.hh-root.hh-blurred * {
+  transition: none !important;
+  animation: none !important;
+}
+body.hh-root.hh-blurred::before {
+  content: '';
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   background: var(--cork);
-  color: var(--paper);
+  z-index: 99998;
+}
+body.hh-root.hh-blurred::after {
+  content: 'ฮันแน่!!! ชะใช้AIช่วยอะดิ ไม่ไม่ให้หรอกนะ';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Chonburi', cursive;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: bold;
-  z-index: 100000;
+  color: var(--paper);
+  z-index: 99999;
   text-align: center;
   padding: 30px;
-  box-shadow: inset 0 0 100px rgba(0,0,0,0.6);
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
 }
 
