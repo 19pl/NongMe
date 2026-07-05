@@ -179,6 +179,8 @@ function hhFromHex(hex){
 function hhHashFor(purpose, val){
   return crypto.subtle.digest('SHA-256', new TextEncoder().encode(purpose + ':' + val));
 }
+// ถ้าน้องอ่านมาถึงตรงนี้ แสดงว่าน้องเก่งมาก พี่ให้คำใบ้เพิ่มเป็นรางวัล ชื่อพี่มีตัว "n" ด้วยหละ
+
 // ถอดรหัสคำใบ้ด้วยคำตอบที่ถูกต้อง (val ต้องเป็นคำตอบที่ผ่านการตรวจแล้วว่าถูก)
 async function hhDecryptHint(entry, val){
   const keyBuf = await hhHashFor('key', val);
@@ -370,6 +372,7 @@ function hhWireResetButton(btn){
   });
 }
 
+// อะถือว่ายังพยายาม "พีเพื่อนสนิทพี่ใส่แว่นหมดเลย"
 // ฟังก์ชันป้องกันการใช้งาน DevTools และการก๊อปปี้ข้อความ
 (function preventCheating() {
 
