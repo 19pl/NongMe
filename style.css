@@ -24,6 +24,10 @@ body.hh-root{
     var(--cork);
   min-height:100vh;
   padding:32px 16px 48px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .hh-title{
@@ -232,5 +236,55 @@ body.hh-root{
   font-family: 'Sarabun', 'Chonburi', sans-serif;
   color: var(--ink);
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* กล่องข้อความแจ้งเตือนเมื่อพยายามแคปเจอร์/ก๊อปปี้ */
+.hh-warning-banner {
+  position: fixed;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--string);
+  color: #fff;
+  padding: 16px 28px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  font-family: 'Chonburi', 'Sarabun', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 99999;
+  transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-align: center;
+  border: 2px solid var(--paper);
+  pointer-events: none;
+  width: 90%;
+  max-width: 440px;
+  line-height: 1.5;
+}
+.hh-warning-banner.show {
+  top: 24px;
+}
+
+/* บล็อกหน้าจอเมื่อเปิดแคปเจอร์/สลับหน้าต่าง */
+body.hh-root.hh-blurred {
+  filter: blur(40px);
+  overflow: hidden;
+}
+body.hh-root.hh-blurred::after {
+  content: 'ฮันแน่!!! ลองคิดเองก่อนน้าา';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--cork);
+  color: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Chonburi', cursive;
+  font-size: 26px;
+  font-weight: bold;
+  z-index: 100000;
+  text-align: center;
+  padding: 30px;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.6);
 }
 

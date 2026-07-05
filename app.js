@@ -349,41 +349,125 @@ function hhWireResetButton(btn){
   });
 }
 
-// ฟังก์ชันป้องกันการใช้งาน DevTools เพื่อไม่ให้แอบดูคำตอบ/คำใบ้
-(function preventDevTools() {
+// ฟังก์ชันป้องกันการใช้งาน DevTools, การก๊อปปี้ และการแคปหน้าจอเพื่อป้องกันการใช้ AI ช่วย
+(function preventCheating() {
+  // สร้างกล่องข้อความเตือนเมื่อพยายามโกง
+  let warningBanner = document.getElementById('hhWarningBanner');
+  if (!warningBanner) {
+    warningBanner = document.createElement('div');
+    warningBanner.className = 'hh-warning-banner';
+    warningBanner.id = 'hhWarningBanner';
+    warningBanner.textContent = 'ฮันแน่!!! ชะใช้AIช่วยอะดิ ไม่ไม่ให้หรอกนะ';
+    document.body.appendChild(warningBanner);
+  }
+
+  let warningTimeout;
+  function showWarningBanner() {
+    warningBanner.classList.add('show');
+    clearTimeout(warningTimeout);
+    warningTimeout = setTimeout(() => {
+      warningBanner.classList.remove('show');
+    }, 4000);
+  }
+
   // 1. ห้ามคลิกขวา (Context Menu)
   document.addEventListener('contextmenu', e => e.preventDefault());
 
-  // 2. ห้ามกดปุ่มลัดสำหรับเปิด DevTools หรือดู Source Code
+  // 2. ห้ามคัดลอก (Copy & Cut)
+  document.addEventListener('copy', e => {
+    e.preventDefault();
+    showWarningBanner();
+  });
+  document.addEventListener('cut', e => {
+    e.preventDefault();
+    showWarningBanner();
+  });
+
+  // 3. ป้องกันการลากและคลุมดำเริ่มต้น (ยกเว้นใน input)
+  document.addEventListener('selectstart', e => {
+    const activeEl = document.activeElement;
+    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+      return;
+    }
+    e.preventDefault();
+  });
+
+  // 4. ห้ามกดปุ่มลัดสำหรับเปิด DevTools, ดู Source Code, แคปภาพ หรือ Print หน้าจอ
   document.addEventListener('keydown', e => {
-    let showWarning = false;
-    // ปิดการใช้ F12
+    let cheatingAttempt = false;
+
+    // ปิด F12
     if (e.key === 'F12') {
       e.preventDefault();
-      showWarning = true;
+      cheatingAttempt = true;
     }
     // ปิด Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (Inspect)
     if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
       e.preventDefault();
-      showWarning = true;
+      cheatingAttempt = true;
     }
     // ปิด Ctrl+U (ดู Source Code)
     if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
       e.preventDefault();
-      showWarning = true;
+      cheatingAttempt = true;
     }
     // ปิด Ctrl+S (บันทึกหน้าเว็บ)
     if (e.ctrlKey && (e.key === 'S' || e.key === 's')) {
       e.preventDefault();
-      showWarning = true;
+      cheatingAttempt = true;
+    }
+    // ปิด Windows + Shift + S หรือ Command + Shift + 4 (Snipping / Screenshot Shortcuts)
+    if (e.metaKey && e.shiftKey && (e.key === 'S' || e.key === 's' || e.key === '4' || e.key === '3')) {
+      cheatingAttempt = true;
+    }
+    // ปิด Ctrl + P (Print หน้าเว็บ)
+    if (e.ctrlKey && (e.key === 'P' || e.key === 'p')) {
+      e.preventDefault();
+      cheatingAttempt = true;
+    }
+    // ปุ่ม PrintScreen
+    if (e.key === 'PrintScreen') {
+      cheatingAttempt = true;
     }
 
-    if (showWarning) {
-      alert("ฮันแน่! พี่ไม่อนุณาตินะจ๊ะ");
+    if (cheatingAttempt) {
+      showWarningBanner();
     }
   });
 
-  // 3. ใช้ลูป Debugger ขัดขวางคอนโซล (หากเปิด DevTools หน้าเว็บจะค้าง/ติด debugger ทันที)
+  // 5. ดักจับปุ่ม PrintScreen แบบ Keyup เพื่อล้าง Clipboard ป้องกันการเซฟภาพ
+  document.addEventListener('keyup', e => {
+    if (e.key === 'PrintScreen') {
+      navigator.clipboard.writeText(''); // เคลียร์คลิปบอร์ด
+      showWarningBanner();
+    }
+  });
+
+  // 6. ดักจับก่อนหน้าการสั่ง Print (รวมถึงเซฟเป็น PDF) เพื่อซ่อนหน้าเว็บ
+  window.addEventListener('beforeprint', () => {
+    document.body.style.opacity = '0';
+    showWarningBanner();
+  });
+  window.addEventListener('afterprint', () => {
+    document.body.style.opacity = '1';
+  });
+
+  // 7. ดักจับเมื่อหลุดโฟกัสหรือสลับแท็บ (เพื่อป้องกันการแคปหน้าจอด้วย Snipping Tool หรือโปรแกรมภายนอก)
+  window.addEventListener('blur', () => {
+    document.body.classList.add('hh-blurred');
+  });
+  window.addEventListener('focus', () => {
+    document.body.classList.remove('hh-blurred');
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      document.body.classList.add('hh-blurred');
+    } else {
+      document.body.classList.remove('hh-blurred');
+    }
+  });
+
+  // 8. ใช้ลูป Debugger ขัดขวางคอนโซล (หากเปิด DevTools หน้าเว็บจะค้าง/ติด debugger ทันที)
   setInterval(() => {
     (function() {}).constructor('debugger')();
   }, 100);
