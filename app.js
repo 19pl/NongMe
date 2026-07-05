@@ -452,20 +452,41 @@ function hhWireResetButton(btn){
     document.body.style.opacity = '1';
   });
 
-  // 7. Polling ด้วย requestAnimationFrame เพื่อตรวจสอบ focus แบบ real-time
-  // วิธีนี้เร็วกว่า event listener มาก ทำให้ overlay ขึ้นก่อนที่ภาพจะถูกแคปได้
-  (function pollFocus() {
-    if (!document.hasFocus() || document.hidden) {
-      document.body.classList.add('hh-blurred');
-    } else {
-      document.body.classList.remove('hh-blurred');
-    }
-    requestAnimationFrame(pollFocus);
-  })();
+  // 7. ป้องกันการแคปหน้าจอบน Desktop เท่านั้น (มือถือ focus หลุดบ่อยตามปกติ ไม่ apply)
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod|Touch/i.test(navigator.userAgent) || ('ontouchstart' in window);
 
-  // ดักจับ blur/focus และ visibilitychange เป็น backup เพิ่มเติม
-  window.addEventListener('blur', () => document.body.classList.add('hh-blurred'));
-  window.addEventListener('focus', () => document.body.classList.remove('hh-blurred'));
+  if (!isMobile) {
+    // Polling ด้วย requestAnimationFrame เพื่อตรวจสอบ focus แบบ real-time
+    // วิธีนี้เร็วกว่า event listener มาก ทำให้ overlay ขึ้นก่อนที่ภาพจะถูกแคปได้
+    let blurDelay;
+    (function pollFocus() {
+      if (!document.hasFocus() || document.hidden) {
+        // หน่วงเล็กน้อย 80ms เพื่อกันการหลุด focus จากการเปิด dialog หรือ alert
+        blurDelay = blurDelay || setTimeout(() => {
+          document.body.classList.add('hh-blurred');
+        }, 80);
+      } else {
+        clearTimeout(blurDelay);
+        blurDelay = null;
+        document.body.classList.remove('hh-blurred');
+      }
+      requestAnimationFrame(pollFocus);
+    })();
+
+    // backup: blur/focus events
+    window.addEventListener('blur', () => {
+      blurDelay = blurDelay || setTimeout(() => {
+        document.body.classList.add('hh-blurred');
+      }, 80);
+    });
+    window.addEventListener('focus', () => {
+      clearTimeout(blurDelay);
+      blurDelay = null;
+      document.body.classList.remove('hh-blurred');
+    });
+  }
+
+  // ดักจับ visibilitychange (ใช้ได้ทั้ง desktop และ mobile)
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) document.body.classList.add('hh-blurred');
     else document.body.classList.remove('hh-blurred');
